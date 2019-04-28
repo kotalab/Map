@@ -10,11 +10,7 @@ import UIKit
 import GoogleMaps
 
 final class MapViewController: UIViewController {
-    struct Location {
-        let latitude: CLLocationDegrees
-        let longitude: CLLocationDegrees
-    }
-    init(location: Location) {
+    init(location: CLLocationCoordinate2D) {
         self.location = location
         super.init(nibName: nil, bundle: .main)
     }
@@ -23,20 +19,18 @@ final class MapViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    let location: Location
+    let location: CLLocationCoordinate2D
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let camera = GMSCameraPosition.camera(withLatitude: location.latitude, longitude: location.longitude, zoom: 6.0)
+        let camera = GMSCameraPosition.camera(withTarget: location, zoom: 16.0)
         let mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
         view = mapView
 
-        // Creates a marker in the center of the map.
         let marker = GMSMarker()
-        marker.position = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-        marker.title = "Sydney"
-        marker.snippet = "Australia"
+        marker.position = location
+        marker.title = "current location"
         marker.map = mapView
     }
 }

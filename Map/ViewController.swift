@@ -13,12 +13,18 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        LocationManager.shared.requestAuthorization()
     }
 
     @IBAction func didTapOpenMapButton(_ sender: Any) {
-        let location = MapViewController.Location(latitude: -33.86, longitude: 151.20)
-        let mapViewController = MapViewController(location: location)
-        navigationController?.pushViewController(mapViewController, animated: true)
+        if LocationManager.shared.canUseLocation {
+            let currentLocation = LocationManager.shared.currentLocation()
+            let mapViewController = MapViewController(location: currentLocation.coordinate)
+            navigationController?.pushViewController(mapViewController, animated: true)
+        } else {
+
+        }
     }
 }
 
