@@ -26,11 +26,7 @@ final class MapViewController: UIViewController {
 
         let camera = GMSCameraPosition.camera(withTarget: location, zoom: 16.0)
         let mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
+        mapView.isMyLocationEnabled = true
         view = mapView
-
-        let marker = GMSMarker()
-        marker.position = location
-        marker.title = "current location"
-        marker.map = mapView
     }
 }
