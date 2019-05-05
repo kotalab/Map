@@ -8,9 +8,10 @@
 
 import UIKit
 import GoogleMaps
+import MapKit
 
 final class MapViewController: UIViewController {
-    init(location: CLLocationCoordinate2D) {
+    init(location: CLLocation) {
         self.location = location
         super.init(nibName: nil, bundle: .main)
     }
@@ -19,14 +20,22 @@ final class MapViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    let location: CLLocationCoordinate2D
+    let location: CLLocation
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let camera = GMSCameraPosition.camera(withTarget: location, zoom: 16.0)
+        let camera = GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 16.0)
         let mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
         mapView.isMyLocationEnabled = true
         view = mapView
+
+        let mapKit = MKMapView(frame: CGRect.zero)
+
+        let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        let region = MKCoordinateRegion(center: location.coordinate, span: span)
+        mapKit.setRegion(region, animated: false)
+        mapKit.userTrackingMode = .followWithHeading
+        view = mapKit
     }
 }
