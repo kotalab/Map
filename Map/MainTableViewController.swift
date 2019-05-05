@@ -33,7 +33,7 @@ final class MainTableViewController: UITableViewController {
                 LocationManager.shared.canUseLocation
         {
             let currentLocation = LocationManager.shared.currentLocation()
-            let mapViewController = MapViewController(location: currentLocation)
+            let mapViewController = MapViewController(settings: MapSettings(cameraLocation: currentLocation.coordinate, showsUserLocation: true))
             navigationController?.pushViewController(mapViewController, animated: true)
         }
     }

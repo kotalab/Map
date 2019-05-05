@@ -10,9 +10,14 @@ import UIKit
 import GoogleMaps
 import MapKit
 
+struct MapSettings {
+    let cameraLocation: CLLocationCoordinate2D
+    let showsUserLocation: Bool
+}
+
 final class MapViewController: UIViewController {
-    init(location: CLLocation) {
-        self.location = location
+    init(settings: MapSettings) {
+        self.settings = settings
         super.init(nibName: nil, bundle: .main)
     }
 
@@ -20,32 +25,43 @@ final class MapViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    let location: CLLocation
+    let settings: MapSettings
     @IBOutlet private weak var googleMapView: GMSMapView!
     @IBOutlet private weak var mapKitView: MKMapView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        setupSegmentedControl()
+        setupAppleMap()
+        setupGoogleMap()
+    }
+
+    private func setupSegmentedControl() {
         let segmentItems = ["Apple", "Google"]
         let segmentedControl = UISegmentedControl(items: segmentItems)
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
         navigationItem.titleView = segmentedControl
-
-        let camera = GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 16.0)
-        googleMapView.camera = camera
-        googleMapView.isMyLocationEnabled = true
-
-        let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
-        let region = MKCoordinateRegion(center: location.coordinate, span: span)
-        mapKitView.setRegion(region, animated: false)
-        mapKitView.userTrackingMode = .follow
-
-        googleMapView.isHidden = true
     }
 
     @objc func didChangeSegment(sender: UISegmentedControl) {
         self.googleMapView.isHidden = sender.selectedSegmentIndex == 0
         self.mapKitView.isHidden = sender.selectedSegmentIndex != 0
+    }
+
+    private func setupAppleMap() {
+        let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        let region = MKCoordinateRegion(center: settings.cameraLocation, span: span)
+        mapKitView.setRegion(region, animated: false)
+        mapKitView.userTrackingMode = settings.showsUserLocation ? .follow : .none
+    }
+
+    private func setupGoogleMap() {
+        let camera = GMSCameraPosition.camera(withTarget: settings.cameraLocation, zoom: 16.0)
+        googleMapView.camera = camera
+        googleMapView.isMyLocationEnabled = settings.showsUserLocation
+
+        googleMapView.isHidden = true
     }
 }
