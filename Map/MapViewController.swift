@@ -21,21 +21,31 @@ final class MapViewController: UIViewController {
     }
 
     let location: CLLocation
+    @IBOutlet private weak var googleMapView: GMSMapView!
+    @IBOutlet private weak var mapKitView: MKMapView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let segmentItems = ["Apple", "Google"]
+        let segmentedControl = UISegmentedControl(items: segmentItems)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        navigationItem.titleView = segmentedControl
 
         let camera = GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 16.0)
-        let mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
-        mapView.isMyLocationEnabled = true
-        view = mapView
-
-        let mapKit = MKMapView(frame: CGRect.zero)
+        googleMapView.camera = camera
+        googleMapView.isMyLocationEnabled = true
 
         let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
         let region = MKCoordinateRegion(center: location.coordinate, span: span)
-        mapKit.setRegion(region, animated: false)
-        mapKit.userTrackingMode = .followWithHeading
-        view = mapKit
+        mapKitView.setRegion(region, animated: false)
+        mapKitView.userTrackingMode = .follow
+
+        googleMapView.isHidden = true
+    }
+
+    @objc func didChangeSegment(sender: UISegmentedControl) {
+        self.googleMapView.isHidden = sender.selectedSegmentIndex == 0
+        self.mapKitView.isHidden = sender.selectedSegmentIndex != 0
     }
 }

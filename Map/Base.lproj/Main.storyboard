@@ -73,7 +73,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="GoogleMaps" id="rxl-W1-FXZ">
+                            <tableViewSection headerTitle="Map features" id="rxl-W1-FXZ">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="Cky-7w-9nU">
                                         <rect key="frame" x="0.0" y="144" width="414" height="44"/>
