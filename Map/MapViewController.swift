@@ -13,8 +13,14 @@ import MapKit
 struct MapSettings {
     let cameraLocation: CLLocationCoordinate2D
     let showsUserLocation: Bool
+    let pins: [Pin]
 }
 
+struct Pin {
+    let coordinate: CLLocationCoordinate2D
+    let title: String?
+    let subtitle: String?
+}
 final class MapViewController: UIViewController {
     init(settings: MapSettings) {
         self.settings = settings
@@ -51,16 +57,30 @@ final class MapViewController: UIViewController {
     }
 
     private func setupAppleMap() {
-        let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         let region = MKCoordinateRegion(center: settings.cameraLocation, span: span)
         mapKitView.setRegion(region, animated: false)
         mapKitView.userTrackingMode = settings.showsUserLocation ? .follow : .none
+
+        settings.pins.forEach {
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = $0.coordinate
+            annotation.title = $0.title
+            annotation.subtitle = $0.subtitle
+            mapKitView.addAnnotation(annotation)
+        }
     }
 
     private func setupGoogleMap() {
-        let camera = GMSCameraPosition.camera(withTarget: settings.cameraLocation, zoom: 16.0)
+        let camera = GMSCameraPosition.camera(withTarget: settings.cameraLocation, zoom: 14.0)
         googleMapView.camera = camera
         googleMapView.isMyLocationEnabled = settings.showsUserLocation
+
+        settings.pins.forEach {
+            let marker = GMSMarker(position: $0.coordinate)
+            marker.title = $0.title
+            marker.map = googleMapView
+        }
 
         googleMapView.isHidden = true
     }
